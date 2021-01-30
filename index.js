@@ -36,27 +36,47 @@ app.get('/games', (req, res) => {
     res.json(db.games);
 });
 
+
 app.get('/game/:id', (req, res) => {
     if(isNaN(req.params.id)){
         res.statusCode = 400;
+
+
     }else{
         res.statusCode = 200;
 
         var id = parseInt(req.params.id);
         var game = db.games.find(g => g.id == id);
 
-        if(game !== undefined){
+        if(game != undefined){
             res.statusCode = 200;
             res.json(game);
+
             
         }else{
             res.sendStatus(404);
+
+
         }
     }
+});
+
+
+app.post('/game', (req,res) => {
+   
+    var {title, price, year} = req.body;
+
+    db.games.push({
+        id: 28,
+        title,
+        price,
+        year
+
+    });
+
+    res.sendStatus(200);
+
 })
-
-
-
 
 
 app.listen(8000, () => {
