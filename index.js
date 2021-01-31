@@ -1,11 +1,18 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const database = require('./database/database');
+const Games = require('./models/Games');    
 
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
+database.authenticate().then(() => {
+    console.log('Banco de dados conectado a API');
+}).catch((err) => {
+    console.log(`Sorry not connection: ${err}`)
+})
 
 var db = {
     games: [
@@ -76,8 +83,74 @@ app.post('/game', (req,res) => {
 
     res.sendStatus(200);
 
-})
+});
 
+
+app.delete('/game/:id', (req,res) => {
+
+  if(isNaN(req.params.id)){
+      res.sendStatus(400);
+
+
+  }else{
+      var id = parseInt(req.params.id);
+      var index = db.games.findIndex(g => g.id == id);
+
+
+      if(index == -1){
+          res.sendStatus(404);
+
+
+      }else{
+          db.games.splice(index, 1);
+          res.sendStatus(200);
+
+          
+
+
+      }
+      
+  }
+
+});
+
+
+app.put('/game/:id', (req, res) => {
+
+    if(isNaN(req.params.id)){
+        res.sendStatus(400);
+
+    }else{
+        var id = parseInt(req.params.id);
+        var game = db.games.find(g => g.id == id);
+
+
+        var {title,price,year} = req.body;
+
+        if(game != undefined){
+            if(title != undefined){
+                game.title = title;
+            }
+    
+            if(price != undefined){
+                game.price = price;
+               
+            }
+    
+            if(year != undefined){
+                game.year = year;
+            }
+    
+            res.sendStatus(200);
+
+        }else{
+            res.sendStatus(400);
+
+        }
+    }
+
+
+});
 
 app.listen(8000, () => {
     console.log('Api Rodando!');
