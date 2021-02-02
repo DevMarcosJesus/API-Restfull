@@ -3,7 +3,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const database = require('./database/database');
 const Games = require('./models/Games');    
+const cors = require('cors');
 
+
+app.use(cors());
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -40,7 +43,12 @@ var db = {
 
 app.get('/games', (req, res) => {
     res.statusCode = 200;
-    res.json(db.games);
+   /*
+    Games.findAll({
+        raw:true
+    })
+    */
+   res.json(db.games);
 });
 
 
@@ -72,14 +80,28 @@ app.get('/game/:id', (req, res) => {
 app.post('/game', (req,res) => {
    
     var {title, price, year} = req.body;
+    /*
+    Games.findAll({
+        where:{
+            id:id,
+            title:title,
+            price:price,
+            year:year
+        }
+    })
+    */
 
-    db.games.push({
-        id: 28,
-        title,
-        price,
-        year
+     if(title != undefined){
+         title = title;
+     }
 
-    });
+     if(price != undefined){
+         price = price;
+     }
+
+     if(year != year){
+         year = year;
+     }
 
     res.sendStatus(200);
 
